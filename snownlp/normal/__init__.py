@@ -8,22 +8,30 @@ import codecs
 from . import zh
 from . import pinyin
 
-stop_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                         'stopwords.txt')
-pinyin_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                           'pinyin.txt')
+#stop_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+#                         'stopwords.txt')
+
+stop_path = u'/Applications/Spyder-Py2.app/Contents/Resources/lib/python2.7/snownlp/normal/stopwords.txt'
+pinyin_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'pinyin.txt')
 stop = set()
 fr = codecs.open(stop_path, 'r', 'utf-8')
 for word in fr:
     stop.add(word.strip())
 fr.close()
 pin = pinyin.PinYin(pinyin_path)
-re_zh = re.compile('([\u4E00-\u9FA5]+)')
+re_zh = re.compile('([\u4E00-\u9FD5]+)')
 
 
 def filter_stop(words):
-    return list(filter(lambda x: x not in stop, words))
-
+#    return list(filter(lambda x: x not in stop, words))
+    words = list(filter(lambda x: x not in stop, words)) # remove stopwords
+    try:
+        words = filter(None, words)
+        words.remove('\n')
+        return words
+    except ValueError:
+        return words
+    
 
 def zh2hans(sent):
     return zh.transfer(sent)
